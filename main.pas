@@ -1,0 +1,323 @@
+unit main;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Menus, ExtCtrls, ComCtrls, ActnList, TuringMod, Types;
+
+const num = ['0' .. '9'];
+
+type
+
+  { TForm1 }
+
+  TForm1 = class(TForm)
+    addcom: TButton;
+    Button1: TButton;
+    del: TComboBox;
+    Edit5: TEdit;
+    ok: TButton;
+    cancel: TButton;
+    ComboBox1: TComboBox;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    Save: TMenuItem;
+    SaveAs: TMenuItem;
+    Open: TMenuItem;
+    stop: TButton;
+    StatusBar: TLabel;
+    ListView1: TListView;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Tape1: TScrollBox;
+    step: TButton;
+    start: TButton;
+    MainMenu1: TMainMenu;
+    FileMenu: TMenuItem;
+    NewProject: TMenuItem;
+    e : TEdit;
+    procedure addcomClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure cancelClick(Sender: TObject);
+    procedure Edit5Change(Sender: TObject);
+    procedure delEnter(Sender: TObject);
+    procedure NewProjectClick(Sender: TObject);
+    procedure okClick(Sender: TObject);
+    procedure OpenClick(Sender: TObject);
+    procedure SaveAsClick(Sender: TObject);
+    procedure SaveClick(Sender: TObject);
+    procedure startClick(Sender: TObject);
+    procedure stepClick(Sender: TObject);
+    procedure FormCreate(Sender : TObject);
+    procedure stopClick(Sender: TObject);
+    procedure Tape1DblClick(Sender: TObject);
+  private
+    theMachine : TuringMachine;
+    procedure machineError(Sender: TObject);
+    procedure machineStart(Sender:TObject);
+    procedure machineStop(Sender: TObject);
+    procedure draw;
+    //procedure EClick(Sender : TObject);
+  public
+    labelL : TList;
+    symbval1 : String;
+    symbval2 : String;
+    stateval1 : Integer;
+    stateval2 : Integer;
+    orientval : Integer;
+    f : text;
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.lfm}
+
+procedure TForm1.draw();
+var t  : String;
+var l : TLabel;
+var i : Integer;
+var p : Integer;
+begin
+   t := theMachine.getTape;
+   p := theMachine.getPosition;
+   for i := labell.Count-1 downto 0 do
+   begin
+        Tlabel(labell[i]).Free;
+   end;
+   labell.Clear;
+   labell := TList.Create();
+
+   for i := 1 to Length(t) do
+   begin
+        l := TLabel.Create(self);
+        l.parent := tape1;
+        l.Caption := t[i];
+        l.Left := 25*(i-1)+4;
+        l.AutoSize:=False;
+        l.top:=5;
+        l.Width:=24;
+        Labell.add(l);
+   end;
+   TLabel(labell[theMachine.last]).Font.Color := clBlue;
+   Tlabel(labell[p-1]).Font.Color := clGreen;
+end;
+
+procedure TForm1.stepClick(Sender: TObject);
+begin
+     themachine.step;
+     draw;
+
+end;
+
+procedure TForm1.startClick(Sender: TObject);
+begin
+  step.Enabled := True;
+  stop.Enabled := True;
+  theMachine.setPosition(1);
+  draw;
+end;
+
+procedure TForm1.addcomClick(Sender: TObject);
+begin
+     if (Edit1.Left <> 0) then
+     begin
+          Edit1.Left := Edit1.Left + 1000;
+          Edit2.Left := Edit2.Left + 1000;
+          Edit3.Left := Edit3.Left + 1000;
+          Edit4.Left := Edit4.Left + 1000;
+          ComboBox1.Left := ComboBox1.Left + 1000;
+          ok.Left := ok.Left + 1000;
+          cancel.Left := cancel.Left + 1000;
+     end;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+     edit5.Align:=alNone;
+     edit5.Left := edit5.Left - 1000;
+     del.Align := alBottom;
+end;
+
+procedure TForm1.cancelClick(Sender: TObject);
+begin
+     Edit1.Left := Edit1.Left - 1000;
+     Edit2.Left := Edit2.Left - 1000;
+     Edit3.Left := Edit3.Left - 1000;
+     Edit4.Left := Edit4.Left - 1000;
+     ComboBox1.Left := ComboBox1.Left - 1000;
+     ok.Left := ok.Left - 1000;
+     cancel.Left := cancel.Left -1000;
+     Edit1.Caption := '';
+
+     Edit2.Caption := '';
+     Edit3.Caption := '';
+     Edit4.Caption := '';
+     Combobox1.Caption := '';
+end;
+
+
+
+procedure TForm1.Edit5Change(Sender: TObject);
+begin
+  theMachine.setTape('$' + edit5.Text + '#');
+  draw;
+end;
+
+function isnum(s : String) : Boolean;
+     var i : Integer;
+     begin
+       result := True;
+       for i := 1 to length(s) do
+           if not(s[i] in num) then result := False;
+     end;
+
+procedure TForm1.delEnter(Sender: TObject);
+var n : String;
+var i:Integer;
+begin
+     n := del.Text;
+     i := ListView1.Items.Count;
+     if isnum(n) then i := StrToInt(n);
+     if Assigned(ListView1.Items[i]) then ListView1.Items.Delete(i);
+     if n = 'all' then ListView1.Clear;
+end;
+
+procedure TForm1.NewProjectClick(Sender: TObject);
+begin
+     start.Enabled:=True;
+     addcom.Enabled:=True;
+     button1.enabled := True;
+     theMachine := TuringMachine.Create();
+     theMachine.onStart := @machineStart;
+     theMachine.onStop:=@machineStop;
+     theMachine.onError:=@machineError;
+     theMachine.setTape('$00000#');
+     draw;
+end;
+
+procedure TForm1.okClick(Sender: TObject);
+var li : TListItem;
+var c : TuringCommand;
+begin
+     Edit1.Left := Edit1.Left - 1000;
+     Edit2.Left := Edit2.Left - 1000;
+     Edit3.Left := Edit3.Left - 1000;
+     Edit4.Left := Edit4.Left - 1000;
+     ComboBox1.Left := ComboBox1.Left - 1000;
+     ok.Left := ok.Left - 1000;
+     cancel.Left := cancel.Left -1000;
+     li := ListView1.items.add;
+     li.caption := edit1.caption;
+     li.SubItems.add(edit2.caption);
+     li.SubItems.add(edit3.caption);
+     li.SubItems.add(edit4.caption);
+     li.SubItems.add(combobox1.caption);
+     Edit1.Left := Edit1.Left - 1000;
+     Edit2.Left := Edit2.Left - 1000;
+     Edit3.Left := Edit3.Left - 1000;
+     Edit4.Left := Edit4.Left - 1000;
+     ComboBox1.Left := ComboBox1.Left - 1000;
+     ok.Left := ok.Left - 1000;
+     cancel.Left := cancel.Left -1000;
+     c:=TuringCommand.Create();
+     c.currState:=StrToInt(Edit2.Caption);
+     c.currSymbol:=Edit1.Caption[1];
+     c.nextState:=StrToInt(Edit3.Caption);
+     c.nextSymbol:=Edit4.Caption[1];
+     c.orientation:=StrToInt(Combobox1.text);
+     theMachine.addCommand(c);
+     del.Items.add(IntToStr(ListView1.Items.Count-1))
+
+
+end;
+
+{   однажды ... мы напишем ето       }
+
+procedure TForm1.OpenClick(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.SaveAsClick(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.SaveClick(Sender: TObject);
+begin
+
+end;
+
+
+procedure TForm1.FormCreate(Sender:TObject);
+begin
+
+          step.Enabled := False;
+          start.Enabled := False;
+          addcom.Enabled := False;
+          stop.Enabled := False;
+          Edit1.Left := Edit1.Left - 1000;
+          Edit2.Left := Edit2.Left - 1000;
+          Edit3.Left := Edit3.Left - 1000;
+          Edit4.Left := Edit4.Left - 1000;
+          del.Left := del.Left - 1000;
+          ComboBox1.Left := ComboBox1.Left - 1000;
+          ok.Left := ok.Left - 1000;
+          cancel.Left := cancel.Left -1000;
+          labell := TList.Create();
+          del.Items.Add('all');
+          button1.enabled := false;
+end;
+
+procedure TForm1.stopClick(Sender: TObject);
+begin
+     step.Enabled := False;
+     stop.Enabled := False;
+end;
+
+procedure TForm1.Tape1DblClick(Sender: TObject);
+begin
+  showmessage('ok');
+  del.Align := alNone;
+  del.Left := del.Left - 1000;
+  edit5.Align := alBottom;
+end;
+
+
+procedure TForm1.machineStart(Sender: TObject);
+begin
+end;
+
+procedure TForm1.machineError(Sender: TObject);
+begin
+     ShowMessage('Ошибка! Команда не найдена');
+     step.Enabled := False;
+     stop.Enabled := False;
+end;
+
+procedure TForm1.machineStop(Sender: TObject);
+begin
+     step.Enabled := False;
+     stop.Enabled:=False;
+     ShowMessage('Машина завершила свою работу корректно');
+
+end;
+
+
+
+
+
+{ TForm1 }
+
+//   удаление команд, очищение списка, подсветка предыдущего, работа с файлами
+//   TTimer - для автоматизма
+end.
+

@@ -1,0 +1,243 @@
+object Form1: TForm1
+  Left = 576
+  Height = 592
+  Top = 0
+  Width = 616
+  Caption = 'Form1'
+  ClientHeight = 564
+  ClientWidth = 616
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  LCLVersion = '1.6.4.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 25
+    Top = 0
+    Width = 616
+    Align = alTop
+    ClientHeight = 25
+    ClientWidth = 616
+    TabOrder = 0
+    object step: TButton
+      Left = 240
+      Height = 25
+      Top = 0
+      Width = 48
+      Caption = 'Шаг'
+      OnClick = stepClick
+      TabOrder = 0
+    end
+    object start: TButton
+      Left = 0
+      Height = 25
+      Top = 0
+      Width = 48
+      Caption = 'Старт'
+      OnClick = startClick
+      TabOrder = 1
+    end
+    object addcom: TButton
+      Left = 48
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = 'Добавить'
+      OnClick = addcomClick
+      TabOrder = 2
+    end
+    object stop: TButton
+      Left = 192
+      Height = 25
+      Top = 0
+      Width = 48
+      Caption = 'Стоп'
+      OnClick = stopClick
+      TabOrder = 3
+    end
+    object Button1: TButton
+      Left = 120
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = 'Удалить'
+      OnClick = Button1Click
+      TabOrder = 4
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 36
+    Top = 528
+    Width = 616
+    Align = alBottom
+    Caption = 'Panel2'
+    ClientHeight = 36
+    ClientWidth = 616
+    TabOrder = 1
+    object StatusBar: TLabel
+      Left = 1
+      Height = 34
+      Top = 1
+      Width = 614
+      Align = alClient
+      Caption = 'StatusBar'
+      Color = clDefault
+      ParentColor = False
+      Transparent = False
+    end
+  end
+  object Tape1: TScrollBox
+    Left = 0
+    Height = 40
+    Top = 25
+    Width = 616
+    HorzScrollBar.Page = 1
+    VertScrollBar.Page = 1
+    Align = alTop
+    TabOrder = 2
+    OnClick = Tape1DblClick
+  end
+  object ListView1: TListView
+    Left = 0
+    Height = 431
+    Top = 65
+    Width = 616
+    Align = alClient
+    AutoWidthLastColumn = True
+    Columns = <    
+      item
+        Caption = 'тек. сим.'
+        Width = 90
+      end    
+      item
+        Caption = 'тек. сос.'
+        Width = 90
+      end    
+      item
+        Caption = 'сл. сос.'
+        Width = 80
+      end    
+      item
+        Caption = 'сл. сим.'
+        Width = 80
+      end    
+      item
+        Caption = 'направление'
+        Width = 261
+      end>
+    RowSelect = True
+    TabOrder = 3
+    ViewStyle = vsReport
+  end
+  object Edit1: TEdit
+    Left = 0
+    Height = 32
+    Top = 104
+    Width = 92
+    TabOrder = 4
+    Text = '1'
+  end
+  object Edit2: TEdit
+    Left = 96
+    Height = 32
+    Top = 104
+    Width = 82
+    NumbersOnly = True
+    TabOrder = 5
+    Text = '1'
+  end
+  object Edit3: TEdit
+    Left = 184
+    Height = 32
+    Top = 104
+    Width = 72
+    NumbersOnly = True
+    TabOrder = 6
+    Text = '1'
+  end
+  object Edit4: TEdit
+    Left = 264
+    Height = 32
+    Top = 104
+    Width = 72
+    TabOrder = 7
+    Text = '1'
+  end
+  object ComboBox1: TComboBox
+    Cursor = crSizeNESW
+    Left = 352
+    Height = 32
+    Top = 104
+    Width = 92
+    ItemHeight = 0
+    ItemIndex = 2
+    Items.Strings = (
+      '-1'
+      '0'
+      '1'
+    )
+    TabOrder = 8
+    Text = '1'
+  end
+  object ok: TButton
+    Left = 448
+    Height = 32
+    Top = 104
+    Width = 56
+    Caption = 'OK'
+    OnClick = okClick
+    TabOrder = 9
+  end
+  object cancel: TButton
+    Left = 512
+    Height = 32
+    Top = 104
+    Width = 75
+    Caption = 'cancel'
+    OnClick = cancelClick
+    TabOrder = 10
+  end
+  object Edit5: TEdit
+    Left = 0
+    Height = 32
+    Top = 496
+    Width = 616
+    Align = alBottom
+    OnEditingDone = Edit5Change
+    TabOrder = 11
+    Text = '00000'
+  end
+  object del: TComboBox
+    Left = 80
+    Height = 32
+    Top = 395
+    Width = 100
+    ItemHeight = 0
+    OnDblClick = delEnter
+    TabOrder = 12
+    Text = 'del'
+  end
+  object MainMenu1: TMainMenu
+    left = 1896
+    top = 956
+    object FileMenu: TMenuItem
+      Caption = 'Файл'
+      object NewProject: TMenuItem
+        Caption = 'Новый проект'
+        OnClick = NewProjectClick
+      end
+      object Save: TMenuItem
+        Caption = 'Сохранить'
+        OnClick = SaveClick
+      end
+      object SaveAs: TMenuItem
+        Caption = 'Сохранить как'
+        OnClick = SaveAsClick
+      end
+      object Open: TMenuItem
+        Caption = 'Открыть'
+        OnClick = OpenClick
+      end
+    end
+  end
+end
